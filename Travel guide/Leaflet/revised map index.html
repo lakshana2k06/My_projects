@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fixed Markers with Hover Names</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map" style="width:100%; height: 100vh"></div>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+    <!-- Include the external data.js file -->
+    <script src="data.js"></script>
+
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([10.9890536, 77.1014971], 13);
+
+        // Add OpenStreetMap layer
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: 'Leaflet &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>, contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Use the coordinates and names from the external data.js file
+        var waypoints = coordinates.map(coord => L.latLng(coord[1], coord[0]));
+
+        // Add markers with tooltips
+        for (let i = 0; i < coordinates.length; i++) {
+            const coord = coordinates[i];
+            const name = shortestPath[i]; // Get the name for the marker
+
+            // Add a non-draggable marker
+            L.marker([coord[1], coord[0]], { draggable: false })
+                .bindTooltip(name, { permanent: false, direction: "top" }).openPopup() // Show tooltip on hover
+                .addTo(map);
+        }
+
+        // Create a routing control with all waypoints
+        L.Routing.control({
+            waypoints: waypoints,
+            routeWhileDragging: false, // Disable dragging of routes
+            showAlternatives: false
+        }).addTo(map);
+    </script>
+</body>
+
+</html>
